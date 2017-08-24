@@ -1,21 +1,23 @@
 import path from 'path';
 import express from 'express';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+import bodyParser from 'body-parser';
+
+import routes from './routes';
+
+dotenv.config();
 
 const app = express();
 
-// API endpoints go here!
-
+//connect to mongodb
+mongoose.connect(process.env.MONGODB, { useMongoClient: true });
 
 // Serve the built client
 app.use(express.static(path.resolve(__dirname, '../../client/dist')));
+app.use(bodyParser.json({ type: 'application/json'}));
 
-app.get('/api/test', (req, res) => {
-    res.send('this is a test');
-});
-
-app.get('/test', (req, res) => {
-    res.send('another one');
-});
+app.use('/api', routes);
 
 // Unhandled requests which aren't for the API should serve index.html so
 // client-side routing using browserHistory can function
