@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 
 import { userModel } from '../schema';
 import { respond } from './utils';
-const saltRounds = 10;
+// const saltRounds = 10;
 dotenv.config();
 
 class UserController {
