@@ -6,6 +6,9 @@ const router = express.Router();
 
 router.post('/login', user.login);
 
-router.post('/room', Auth.isRequestValid, room.addRoom);
+router.route('/room')
+    .post(Auth.isRequestValid, room.addRoom)
+    .get(Auth.isRequestValid, room.getAllRooms);
 
+router.post('/room/add', Auth.isRequestValid, room.addOccupant);
 export default router;
