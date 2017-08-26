@@ -1,0 +1,33 @@
+* {
+  box-sizing: border-box
+}
+
+.form-field {
+  width: 90%;
+  margin: 30px auto;
+}
+
+.form-field input[type="text"], .form-field input[type="password"] {
+  width: 100%;
+  padding: 0 2%;
+  height: 40px;
+  border: 1px solid #ccc;
+}
+
+.form-field input[type="text"]:focus, .form-field input[type="password"]:focus {
+  outline: none;
+  background: #F5F5FB;
+}
+
+.form-field input[type="submit"], .form-field input[type="button"] {
+  height: 30px;
+  background: #3259D8;
+  border: none;
+  color: #fff;
+  width: 30%;
+  margin-left: 35%
+}
+
+.form-field input[type="submit"]:focus, .form-field input[type="button"]:focus {
+  outline: none;
+}
