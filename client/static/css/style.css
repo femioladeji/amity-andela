@@ -25,7 +25,13 @@
   border: none;
   color: #fff;
   width: 30%;
-  margin-left: 35%
+  margin-left: 35%;
+  cursor: pointer;
+  transition: all 0.4s;
+}
+
+.form-field input[type="submit"]:hover, .form-field input[type="button"]:hover {
+  transform: scale(1.1);
 }
 
 .form-field input[type="submit"]:focus, .form-field input[type="button"]:focus {

@@ -3,12 +3,12 @@
     <div ref="login" class="login">
       <img class="logo" src="../assets/images/logo.png" />
       <p>Sign in</p>
-      <form v-on:submit.prevent="onSubmit">
+      <form v-on:submit.prevent="login">
         <div class="form-field">
-          <input type="text" name="username" placeholder="Username" />
+          <input v-model.trim="username" type="text" name="username" placeholder="Username" />
         </div>
         <div class="form-field">
-          <input type="password" name="password" placeholder="Password" />
+          <input v-model.trim="password" type="password" name="password" placeholder="Password" />
         </div>
         <div class="form-field">
           <input type="submit" name="login" value="SIGN IN" />
@@ -24,13 +24,19 @@ export default {
   name: 'hello',
   data() {
     return {
-      msg: 'Welcome to Your Vue.js App',
+      username: '',
+      password: ''
     };
+  },
+
+  methods: {
+    login: function() {
+      console.log(this.username, this.password);
+    }
   },
 
   mounted: function() {
     const login = this.$refs.login;
-    console.log(this.$refs.login);
     animate();
     function animate() {
       requestAnimationFrame(animate);
@@ -38,45 +44,10 @@ export default {
     }
     const rotX = {x: 30};
     const tweenA = new TWEEN.Tween(rotX)
-      .to({x: -30}, 300)
+      .to({x: 0}, 300)
       .onUpdate(() => {
         login.style.setProperty('transform', `rotateX(${rotX.x}deg)`)
       });
-
-    const tweenB = new TWEEN.Tween(rotX)
-      .to({x: 15}, 400)
-      .onUpdate(() => {
-        login.style.setProperty('transform', `rotateX(${rotX.x}deg)`)
-      });
-
-    const tweenC = new TWEEN.Tween(rotX)
-      .to({x: -10}, 200)
-      .onUpdate(() => {
-        login.style.setProperty('transform', `rotateX(${rotX.x}deg)`)
-      });
-
-    const tweenD = new TWEEN.Tween(rotX)
-      .to({x: 10}, 300)
-      .onUpdate(() => {
-        login.style.setProperty('transform', `rotateX(${rotX.x}deg)`)
-      });
-
-    const tweenE = new TWEEN.Tween(rotX)
-      .to({x: 0}, 200)
-      .onUpdate(() => {
-        login.style.setProperty('transform', `rotateX(${rotX.x}deg)`)
-      });
-    const tweenF = new TWEEN.Tween(rotX)
-      .to({x: 0}, 100)
-      .onUpdate(() => {
-        login.style.setProperty('transform', `rotateX(${rotX.x}deg)`)
-      });
-    // tweenA.start();
-    tweenA.chain(tweenB);
-    tweenB.chain(tweenC);
-    tweenC.chain(tweenD);
-    tweenD.chain(tweenE);
-    // tweenE.chain(tweenF);
     tweenA.start()
   }
 };
