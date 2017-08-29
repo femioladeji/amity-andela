@@ -20,6 +20,7 @@
 
 <script>
 import * as TWEEN from '@tweenjs/tween.js';
+import { mapState } from 'vuex'
 export default {
   name: 'hello',
   data() {
