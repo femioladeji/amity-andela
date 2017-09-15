@@ -1,17 +1,19 @@
 <template>
   <div class="wrapper">
     <div ref="login" class="login">
-      <img class="logo" src="../assets/images/logo.png" />
-      <p>Sign in</p>
+      <img ref="logo" class="logo" src="../assets/images/logo.png" />
+      <p ref="title">Sign in</p>
       <form v-on:submit.prevent="login">
-        <div class="form-field">
+        <div ref="username" class="form-field">
           <input v-model.trim="username" type="text" name="username" placeholder="Username" />
         </div>
-        <div class="form-field">
+        <div ref="password" class="form-field">
           <input v-model.trim="password" type="password" name="password" placeholder="Password" />
         </div>
-        <div class="form-field">
-          <input type="submit" name="login" value="SIGN IN" />
+        <Loader v-if="loading"></Loader>
+        <span v-if="message" :class="{'message': true, 'error-message': !status}">{{message}}</span>
+        <div ref="button" class="form-field action">
+          <input v-if="!loading" type="submit" class="login" name="login" value="SIGN IN" />
         </div>
       </form>
     </div>
@@ -20,36 +22,67 @@
 
 <script>
 import * as TWEEN from '@tweenjs/tween.js';
-import { mapState } from 'vuex'
+import api from '../utils/api';
 export default {
-  name: 'hello',
+  name: 'signin',
   data() {
     return {
       username: '',
-      password: ''
+      password: '',
+      loading: false,
+      message: '',
+      status: true
     };
   },
 
+
   methods: {
     login: function() {
-      console.log(this.username, this.password);
+      const { username, password } = this;
+      this.loading = true;
+      api.post('login', { username, password }).then(res => {
+        if(res.status === 200) {
+          localStorage.setItem('amity', res.data.payload);
+          this.showResponse('Login successful', true);
+          setTimeout(() => {
+            this.$router.push('dashboard');
+          }, 1500);
+        } else {
+          this.showResponse(res.data.payload, false);
+        }
+      }).catch(err => {
+        this.showResponse(err.data.payload, false);
+      });
+    },
+
+    showResponse: function(message, type) {
+      this.message = message;
+      this.status = type;
+      this.loading = false;
     }
   },
 
   mounted: function() {
-    const login = this.$refs.login;
+    const parts = [this.$refs.logo, this.$refs.title, this.$refs.username, this.$refs.password, this.$refs.button];
+    const tweens = [];
     animate();
     function animate() {
       requestAnimationFrame(animate);
       TWEEN.update();
     }
-    const rotX = {x: 30};
-    const tweenA = new TWEEN.Tween(rotX)
-      .to({x: 0}, 300)
-      .onUpdate(() => {
-        login.style.setProperty('transform', `rotateX(${rotX.x}deg)`)
-      });
-    tweenA.start()
+    parts.forEach((element, index) => {
+      let position = {top: 420};
+      let theTween = new TWEEN.Tween(position)
+        .to({top: 0}, 500)
+        .onUpdate(() => {
+          parts[index].style.setProperty('top', `${position.top}px`);
+        });
+      tweens.push(theTween);
+    });
+    tweens.forEach((eachTween, index) => {
+      tweens[index].delay((index*100));
+      tweens[index].start();
+    });
   }
 };
 </script>
@@ -61,14 +94,13 @@ export default {
   min-height: 100vh;
   align-items: center;
   justify-content: center;
-  perspective: 500px;
 }
 .login {
   width: 90%;
+  height: 418px;
+  overflow: hidden;
   max-width: 300px;
   box-shadow: 0 3px 10px 1px rgba(0,0,0,0.22);
-  transform-origin: 50% 0 0px;
-  transform: rotateX(30deg);
 }
 .login p {
   padding: 0;
@@ -82,5 +114,29 @@ export default {
 .logo {
   width: 20%;
   margin: 30px 40%;
+}
+
+.action {
+  margin-top: 0px;
+}
+
+.logo, .form-field, p {
+  position: relative;
+  top: 420px;
+}
+
+.login {
+  margin-top: 20px;
+}
+
+.message {
+  text-align: center;
+  display: inline-block;
+  width: 100%;
+  font-size: 12px;
+}
+
+.error-message {
+  color: #D8325E;
 }
 </style>
