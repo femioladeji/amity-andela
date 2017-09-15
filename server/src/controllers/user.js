@@ -16,11 +16,12 @@ class UserController {
      * @param {object} res response
      */
     static login(req, res) {
+        // console.log(req.body);
         if(!req.body.username || !req.body.password) {
             return respond(res, 400, 'Username and password are required');
         }
         userModel.isUserValid(req.body, (err, user) => {
-            if(err) {
+            if(err || !user) {
                 return respond(res, 401, 'Invalid credentials');
             }
             bcrypt.compare(req.body.password, user.password, (err, valid) => {

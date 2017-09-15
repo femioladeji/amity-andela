@@ -2,6 +2,11 @@
   box-sizing: border-box
 }
 
+body {
+  margin: 0;
+  padding: 0;
+}
+
 .form-field {
   width: 90%;
   margin: 30px auto;
@@ -36,4 +41,22 @@
 
 .form-field input[type="submit"]:focus, .form-field input[type="button"]:focus {
   outline: none;
+}
+
+.nav-bar {
+  height: 70px;
+  width: 100%;
+  background: #3259D8;
+  display: flex;
+  align-content: center;
+}
+
+.nav-bar .logo {
+  height: 70px;
+  padding: 0 20px;
+  background: #fff;
+}
+
+.nav-bar .logo img {
+  height: 100%;
 }
