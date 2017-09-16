@@ -1,6 +1,8 @@
 import Vue from 'vue';
 import Router from 'vue-router';
-import Hello from '@/components/Hello';
+import Signin from '@/components/Signin';
+import Main from '@/components/main';
+import Settings from '@/components/settings';
 
 Vue.use(Router);
 
@@ -8,8 +10,18 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Hello',
-      component: Hello,
+      name: 'Login',
+      component: Signin,
     },
-  ],
+    {
+      path: '/dashboard',
+      name: 'Dashboard',
+      component: Main,
+    },
+    {
+      path: '/settings',
+      name: 'Settings',
+      component: Settings,
+    }
+  ]
 });

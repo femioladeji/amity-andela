@@ -4,7 +4,7 @@ import { respond } from './utils';
 class RoomController {
     static addRoom(req, res) {
         const { name, floor, totalNumberOfOccupants } = req.body;
-        if(!name || !floor || !totalNumberOfOccupants) {
+        if(!name || typeof floor !== 'number' || !totalNumberOfOccupants) {
             return respond(res, 400, 'Some compulsory fields are empty');
         }
         const newRoom = new roomModel(req.body);

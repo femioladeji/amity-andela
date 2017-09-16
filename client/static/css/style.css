@@ -1,0 +1,66 @@
+* {
+  box-sizing: border-box
+}
+
+body {
+  margin: 0;
+  padding: 0;
+}
+
+.form-field {
+  width: 90%;
+  margin: 30px auto;
+}
+
+.form-field input[type="text"], .form-field input[type="number"], .form-field input[type="password"], select {
+  width: 100%;
+  padding: 0 2%;
+  height: 40px;
+  border: 1px solid #ccc;
+}
+
+.form-field input[type="text"]:focus, .form-field input[type="number"]:focus, .form-field input[type="password"]:focus, select:focus {
+  outline: none;
+  background: #F5F5FB;
+}
+
+.form-field input[type="submit"], .form-field input[type="button"] {
+  height: 30px;
+  background: #3259D8;
+  border: none;
+  color: #fff;
+  width: 30%;
+  margin-left: 35%;
+  cursor: pointer;
+  transition: all 0.4s;
+}
+
+.form-field input[type="submit"]:hover, .form-field input[type="button"]:hover {
+  transform: scale(1.1);
+}
+
+.form-field input[type="submit"]:focus, .form-field input[type="button"]:focus {
+  outline: none;
+}
+
+.nav-bar {
+  height: 70px;
+  width: 100%;
+  background: #3259D8;
+  display: flex;
+  align-content: center;
+}
+
+.nav-bar .logo {
+  height: 70px;
+  padding: 0 20px;
+  background: #fff;
+}
+
+.nav-bar .logo img {
+  height: 100%;
+}
+
+span.label {
+  font-size: 12px;
+}

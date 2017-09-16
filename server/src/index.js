@@ -1,5 +1,6 @@
 import path from 'path';
 import express from 'express';
+import cors from 'cors';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
@@ -13,6 +14,7 @@ const app = express();
 //connect to mongodb
 mongoose.connect(process.env.MONGODB, { useMongoClient: true });
 
+app.use(cors());
 // Serve the built client
 app.use(express.static(path.resolve(__dirname, '../../client/dist')));
 app.use(bodyParser.json({ type: 'application/json'}));
