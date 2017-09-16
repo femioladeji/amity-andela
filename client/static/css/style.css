@@ -12,14 +12,14 @@ body {
   margin: 30px auto;
 }
 
-.form-field input[type="text"], .form-field input[type="password"] {
+.form-field input[type="text"], .form-field input[type="number"], .form-field input[type="password"], select {
   width: 100%;
   padding: 0 2%;
   height: 40px;
   border: 1px solid #ccc;
 }
 
-.form-field input[type="text"]:focus, .form-field input[type="password"]:focus {
+.form-field input[type="text"]:focus, .form-field input[type="number"]:focus, .form-field input[type="password"]:focus, select:focus {
   outline: none;
   background: #F5F5FB;
 }
@@ -59,4 +59,8 @@ body {
 
 .nav-bar .logo img {
   height: 100%;
+}
+
+span.label {
+  font-size: 12px;
 }

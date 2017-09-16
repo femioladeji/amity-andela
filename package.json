@@ -28,6 +28,10 @@
         "express": "^4.14.1",
         "http-proxy-middleware": "^0.17.3",
         "npm-run-all": "^4.0.1",
+        "sass-loader": "^6.0.6",
         "xp": "^1.0.1"
+    },
+    "devDependencies": {
+        "node-sass": "^4.5.3"
     }
 }
