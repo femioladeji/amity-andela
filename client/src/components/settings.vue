@@ -7,20 +7,19 @@
     <div class="wrapper">
       <div class="card">
         <p>Add Room</p>
-
         <form v-on:submit.prevent="addRoom">
           <div ref="name" class="form-field">
             <span class="label">Room Name</span>
             <input v-model.trim="name" type="text" name="name" />
           </div>
-          <div ref="totalNumberOfOccupants" class="form-field">
+          <div class="form-field">
             <span class="label">Number of Occupants</span>
             <input v-model.trim="totalNumberOfOccupants" type="number" name="noofoccupants" />
           </div>
-          <div ref="totalNumberOfOccupants" class="form-field">
+          <div class="form-field">
             <span class="label">Floor</span>
             <select v-model.trim="floor">
-              <option value="">--Select floor--</option>
+              <option disabled value="">--Select floor--</option>
               <option v-for="(option, index) in floors" :value="index" :key="index">{{option}}</option>
             </select>
           </div>
@@ -33,7 +32,25 @@
       </div>
 
       <div class="card">
-
+        <p>Add users to room</p>
+        <form v-on:submit.prevent="addUser">
+          <div ref="name" class="form-field">
+            <span class="label">Room</span>
+            <select v-model.trim="theRoom">
+              <option disabled value="">--Select Room--</option>
+              <option v-for="(room, key) in rooms" :value="room._id" :key="key">{{room.name}}</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <span class="label">Name</span>
+            <input v-model.trim="username" type="text" name="username" />
+          </div>
+          <Loader v-if="loading[1]"></Loader>
+          <span v-if="message[0]" :class="{'message': true, 'error-message': !status[1]}">{{message[1]}}</span>
+          <div ref="button" class="form-field action">
+            <input v-if="!loading[1]" type="submit" class="" name="addroom" value="ADD USER" />
+          </div>
+        </form>
       </div>
 
       <div class="card">
@@ -48,6 +65,7 @@
 </template>
 
 <script>
+import Vue from 'vue';
 import api from '../utils/api';
 export default {
   name: 'settings',
@@ -57,18 +75,27 @@ export default {
       totalNumberOfOccupants: '',
       floor: '',
       floors: ['Ground floor', 'first floor'],
-      loading: [false],
+      loading: [false, false],
       message: [''],
-      status: [false]
+      status: [false, false],
+      rooms: [],
+      theRoom: '',
+      username: ''
     }
   },
   methods: {
+    getAuthorization() {
+      return { authorization: localStorage.getItem('amity') };
+    },
+
     addRoom() {
       const { name, totalNumberOfOccupants, floor } = this;
-      this.loading[0] = true;
-      api.post('room', { name, totalNumberOfOccupants, floor }, { authorization: localStorage.getItem('amity') })
+      Vue.set(this.loading, 0, true);
+      api.post('room', { name, totalNumberOfOccupants, floor }, this.getAuthorization())
         .then(res => {
           if(res.status === 201) {
+            this.name = this.floor = this.totalNumberOfOccupants = '';
+            this.$refs.addRoom.reset();
             this.showResponse(true, 0, res.data.payload);
           } else {
             this.showResponse(false, 0, res.data.payload);
@@ -79,15 +106,30 @@ export default {
     },
 
     showResponse(status, index, message) {
-      console.log('here');
-      this.message[index] = message;
-      this.status[index] = status;
-      this.loading[index] = false;
+      Vue.set(this.message, index, message);
+      Vue.set(this.status, index, status);
+      Vue.set(this.loading, index, false);
+    },
+
+    getAllRooms() {
+      api.get('room', this.getAuthorization()).then(res => {
+        if(res.status === 200) {
+          this.rooms.push(...res.data.payload);
+        }
+      })
+    },
+
+    addUser() {
+      api.post('room/add', {room: this.room, name: this.username}, this.getAuthorization())
+        .then(res => {
+          const status = res.status === 201 ? true : false;
+          this.showResponse(status, 1, res.data.payload);
+        });
     }
   },
 
-  mounted: () => {
-    console.log('settings');
+  mounted() {
+    this.getAllRooms();
   }
 }
 </script>
