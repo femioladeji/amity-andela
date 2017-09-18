@@ -128,15 +128,4 @@ export default {
 .login {
   margin-top: 20px;
 }
-
-.message {
-  text-align: center;
-  display: inline-block;
-  width: 100%;
-  font-size: 12px;
-}
-
-.error-message {
-  color: #D8325E;
-}
 </style>

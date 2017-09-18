@@ -14,9 +14,8 @@
 <style scoped>
 .cssload-loader {
 	width: 24px;
-	height: 24px;
-	position: absolute;
-	left: 50%;
+  height: 24px;
+  margin: auto;
 	transform: translate3d(-50%, -50%, 0);
 		-o-transform: translate3d(-50%, -50%, 0);
 		-ms-transform: translate3d(-50%, -50%, 0);
