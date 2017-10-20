@@ -46,7 +46,7 @@
             <input v-model.trim="username" type="text" name="username" />
           </div>
           <Loader v-if="loading[1]"></Loader>
-          <span v-if="message[0]" :class="{'message': true, 'error-message': !status[1]}">{{message[1]}}</span>
+          <span v-if="message[1]" :class="{'message': true, 'error-message': !status[1]}">{{message[1]}}</span>
           <div ref="button" class="form-field action">
             <input v-if="!loading[1]" type="submit" class="" name="addroom" value="ADD USER" />
           </div>
@@ -54,7 +54,30 @@
       </div>
 
       <div class="card">
+        <p>Remove users from a room</p>
+        <form v-on:submit.prevent="addUser">
+          <div ref="name" class="form-field">
+            <span class="label">Room</span>
+            <select v-on:change="roomChange" v-model.trim="removeRoom" ref="removeRoom">
+              <option disabled value="">--Select Room--</option>
+              <option v-for="(room, key) in rooms" :data-index="key" :value="room._id" :key="key">{{room.name}}</option>
+            </select>
+          </div>
 
+          <div ref="name" class="form-field">
+            <span class="label">User</span>
+            <select v-model.trim="removeRoom">
+              <option disabled value="">--Select User--</option>
+              <option v-for="(user, key) in usersInRoom" :value="key" :key="key">{{user}}</option>
+            </select>
+          </div>
+
+          <Loader v-if="loading[2]"></Loader>
+          <span v-if="message[2]" :class="{'message': true, 'error-message': !status[2]}">{{message[2]}}</span>
+          <div ref="button" class="form-field action">
+            <input v-if="!loading[1]" type="submit" class="" name="addroom" value="REMOVE USER" />
+          </div>
+        </form>
       </div>
 
       <div class="card">
@@ -80,10 +103,19 @@ export default {
       status: [false, false],
       rooms: [],
       theRoom: '',
-      username: ''
+      username: '',
+      removeRoom: '',
+      usersInRoom: []
     }
   },
   methods: {
+    roomChange({ target }) {
+      if(target.value) {
+        const index = target.selectedIndex - 1;
+        this.usersInRoom.push(...this.rooms[index].occupants);
+      }
+    },
+
     getAuthorization() {
       return { authorization: localStorage.getItem('amity') };
     },
@@ -95,8 +127,8 @@ export default {
         .then(res => {
           if(res.status === 201) {
             this.name = this.floor = this.totalNumberOfOccupants = '';
-            this.$refs.addRoom.reset();
-            this.showResponse(true, 0, res.data.payload);
+            this.rooms.push(res.data.payload.data);
+            this.showResponse(true, 0, res.data.payload.msg);
           } else {
             this.showResponse(false, 0, res.data.payload);
           }
@@ -120,9 +152,14 @@ export default {
     },
 
     addUser() {
-      api.post('room/add', {room: this.room, name: this.username}, this.getAuthorization())
+      Vue.set(this.loading, 1, true);
+      api.post('room/add', {room: this.theRoom, name: this.username}, this.getAuthorization())
         .then(res => {
-          const status = res.status === 201 ? true : false;
+          let status = false;
+          if(res.status === 201) {
+            status = true;
+            this.theRoom = this.username = '';
+          }
           this.showResponse(status, 1, res.data.payload);
         });
     }

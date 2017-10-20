@@ -23,6 +23,7 @@
 <script>
 import * as TWEEN from '@tweenjs/tween.js';
 import api from '../utils/api';
+import { saveToken } from '../utils/auth';
 export default {
   name: 'signin',
   data() {
@@ -42,7 +43,7 @@ export default {
       this.loading = true;
       api.post('login', { username, password }).then(res => {
         if(res.status === 200) {
-          localStorage.setItem('amity', res.data.payload);
+          saveToken(res.data.payload);
           this.showResponse('Login successful', true);
           setTimeout(() => {
             this.$router.push('dashboard');

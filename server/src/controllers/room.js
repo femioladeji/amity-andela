@@ -12,7 +12,7 @@ class RoomController {
             if(err) {
                 return respond(res, 500, 'An error occurred');
             }
-            return respond(res, 201, 'Room created successfully');
+            return respond(res, 201, { msg: 'Room created successfully', data: room });
         });
     }
 
@@ -28,14 +28,18 @@ class RoomController {
         }
         RoomController.getARoom(req.body.room)
             .then(room => {
-                room.occupants.push({ name: req.body.name });
+                if(room.occupants.indexOf(req.body.name) >= 0) {
+                    return respond(res, 400, 'User already belongs to room');
+                }
+                room.occupants.push(req.body.name);
                 room.save((err, updatedRoom) => {
                     if(err) {
                         return respond(res, 500, 'Error occurred');                
                     }
                     return respond(res, 201, `New occupant added to ${room.name}`);                
                 });
-            }).catch(() => {
+            }).catch((e) => {
+                console.log(e);
                 return respond(res, 404, 'Room not found');
             });
     }
