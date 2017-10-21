@@ -41,7 +41,7 @@ export default {
     login: function() {
       const { username, password } = this;
       this.loading = true;
-      api.post('login', { username, password }).then(res => {
+      api.request('login', 'post', { username, password }).then(res => {
         if(res.status === 200) {
           saveToken(res.data.payload);
           this.showResponse('Login successful', true);

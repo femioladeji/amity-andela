@@ -55,7 +55,7 @@ class RoomController {
                     if(err) {
                         return respond(res, 500, 'Error occurred');                
                     }
-                    return respond(res, 201, `Occupant removed from ${room.name}`);                
+                    return respond(res, 200, `Occupant removed from ${room.name}`);                
                 });
             }).catch(() => {
                 return respond(res, 404, 'Room not found');

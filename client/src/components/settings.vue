@@ -38,7 +38,7 @@
             <span class="label">Room</span>
             <select v-model.trim="theRoom">
               <option disabled value="">--Select Room--</option>
-              <option v-for="(room, key) in rooms" :value="room._id" :key="key">{{room.name}}</option>
+              <option v-for="(room, key) in rooms" :value="key" :key="key">{{room.name}}</option>
             </select>
           </div>
           <div class="form-field">
@@ -55,18 +55,18 @@
 
       <div class="card">
         <p>Remove users from a room</p>
-        <form v-on:submit.prevent="addUser">
+        <form v-on:submit.prevent="removeUser">
           <div ref="name" class="form-field">
             <span class="label">Room</span>
-            <select v-on:change="roomChange" v-model.trim="removeRoom" ref="removeRoom">
+            <select v-on:change="roomChange" v-model.trim="roomIndex" ref="removeRoom">
               <option disabled value="">--Select Room--</option>
-              <option v-for="(room, key) in rooms" :data-index="key" :value="room._id" :key="key">{{room.name}}</option>
+              <option v-for="(room, key) in rooms" :data-index="key" :value="key" :key="key">{{room.name}}</option>
             </select>
           </div>
 
           <div ref="name" class="form-field">
             <span class="label">User</span>
-            <select v-model.trim="removeRoom">
+            <select v-model.trim="userInRoomIndex" ref="userToRemove">
               <option disabled value="">--Select User--</option>
               <option v-for="(user, key) in usersInRoom" :value="key" :key="key">{{user}}</option>
             </select>
@@ -75,7 +75,7 @@
           <Loader v-if="loading[2]"></Loader>
           <span v-if="message[2]" :class="{'message': true, 'error-message': !status[2]}">{{message[2]}}</span>
           <div ref="button" class="form-field action">
-            <input v-if="!loading[1]" type="submit" class="" name="addroom" value="REMOVE USER" />
+            <input v-if="!loading[2]" type="submit" class="" name="addroom" value="REMOVE USER" />
           </div>
         </form>
       </div>
@@ -90,6 +90,7 @@
 <script>
 import Vue from 'vue';
 import api from '../utils/api';
+import { getAuthorization } from '../utils/auth';
 export default {
   name: 'settings',
   data() {
@@ -104,26 +105,22 @@ export default {
       rooms: [],
       theRoom: '',
       username: '',
-      removeRoom: '',
+      roomIndex: '',
+      userInRoomIndex: '',
       usersInRoom: []
     }
   },
   methods: {
     roomChange({ target }) {
-      if(target.value) {
-        const index = target.selectedIndex - 1;
-        this.usersInRoom.push(...this.rooms[index].occupants);
+      if(this.roomIndex !== '') {
+        this.usersInRoom = this.rooms[this.roomIndex].occupants;
       }
-    },
-
-    getAuthorization() {
-      return { authorization: localStorage.getItem('amity') };
     },
 
     addRoom() {
       const { name, totalNumberOfOccupants, floor } = this;
       Vue.set(this.loading, 0, true);
-      api.post('room', { name, totalNumberOfOccupants, floor }, this.getAuthorization())
+      api.post('room', { name, totalNumberOfOccupants, floor }, getAuthorization())
         .then(res => {
           if(res.status === 201) {
             this.name = this.floor = this.totalNumberOfOccupants = '';
@@ -144,7 +141,7 @@ export default {
     },
 
     getAllRooms() {
-      api.get('room', this.getAuthorization()).then(res => {
+      api.request('room', 'get', null, getAuthorization()).then(res => {
         if(res.status === 200) {
           this.rooms.push(...res.data.payload);
         }
@@ -153,14 +150,34 @@ export default {
 
     addUser() {
       Vue.set(this.loading, 1, true);
-      api.post('room/add', {room: this.theRoom, name: this.username}, this.getAuthorization())
+      api.request('room/add', 'post', {room: this.rooms[this.theRoom]._id, name: this.username}, getAuthorization())
         .then(res => {
           let status = false;
           if(res.status === 201) {
             status = true;
+            this.rooms[this.theRoom].occupants.push(this.username);
             this.theRoom = this.username = '';
           }
           this.showResponse(status, 1, res.data.payload);
+        });
+    },
+
+    removeUser() {
+      Vue.set(this.loading, 2, true);
+      const details = {
+        room: this.rooms[this.roomIndex]._id,
+        occupant: this.rooms[this.roomIndex].occupants[this.userInRoomIndex]
+      }
+      api.request('room/remove', 'delete', details, getAuthorization())
+        .then(res => {
+          let status = false;
+          if(res.status === 200) {
+            status = true;
+            this.rooms[this.roomIndex].occupants.splice(this.userInRoomIndex, 1);
+            this.roomIndex = this.userInRoomIndex = '';
+            this.usersInRoom = [];
+          }
+          this.showResponse(status, 2, res.data.payload);
         });
     }
   },

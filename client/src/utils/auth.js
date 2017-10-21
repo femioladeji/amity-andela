@@ -50,3 +50,10 @@ export function requireAuth(to, from, next) {
     next();
   }
 }
+
+export function getAuthorization() {
+  if(!isLoggedIn) {
+    return logout();
+  }
+  return { authorization: getToken() };
+}
