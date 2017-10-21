@@ -1,48 +1,25 @@
 import axios from 'axios';
-const baseURL = `http://localhost:8000/api`;
+const baseURL = `http://localhost:8000/api/`;
 // const baseURL = `http://localhost:8000/api`;
 
 class ApiHelper {
-  static get(url, headerOptions) {
-    return ApiHelper.buildRequest(url, 'GET', headerOptions);
-  }
-
-  static post(url, requestData, headerOptions) {
-    return ApiHelper.buildRequest(url, 'POST', headerOptions, requestData);
-  }
-
-  static put(url, requestData, headerOptions) {
-    return ApiHelper.buildRequest(url, 'PUT', headerOptions, requestData);
-  }
-
-  static patch(url, requestData, headerOptions) {
-    return ApiHelper.buildRequest(url, 'PATCH', headerOptions, requestData);
-  }
-
-  static buildRequest(url, method, customHeader, requestData) {
-    const config = {
-      baseURL,
+  static request(url, method, data, options) {
+    let headers = { 'Content-Type': 'application/json' };
+    headers = Object.assign(headers, options);
+    const apiRequest = new axios({
       method,
-      url,
-      headers: { 'Content-Type': 'application/json' },
-      validateStatus(status) {
-        return (status >= 200) & (status < 500);
-      }
-    };
+      url: `${baseURL}${url}`,
+      data,
+      headers
+    });
 
-    if (method === 'POST' || method === 'PATCH' || method === 'PUT') {
-      config.data = requestData;
-    }
-
-    if (customHeader) {
-      config.headers = Object.assign(config.headers, customHeader);
-    }
-
-    return ApiHelper.makeRequest(config);
-  }
-
-  static makeRequest(config) {
-    return axios(config);
+    return new Promise((resolve, reject) => {
+      apiRequest.then(response => {
+        resolve(response);
+      }).catch(err => {
+        reject(err);
+      })
+    });
   }
 }
 

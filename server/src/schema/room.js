@@ -13,9 +13,7 @@ const roomSchema = mongoose.Schema({
         type: Number,
         required: true
     },
-    occupants: [{
-        name: String
-    }]
+    occupants: [String]
 });
 
 const roomModel = mongoose.model('room', roomSchema);
