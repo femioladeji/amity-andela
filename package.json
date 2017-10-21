@@ -5,13 +5,12 @@
     "main": "index.js",
     "scripts": {
         "start": "run-s build:client build:server && node index.js",
-        "heroku-postbuild": "cd client && npm install --only=dev && npm run build",
         "dev": "run-p dev:server dev:client dev:start",
         "dev:start": "node index.js",
         "dev:client": "cd client && npm start",
         "dev:server": "cd server && npm start",
-        "build:client": "cd client && npm run build",
-        "build:server": "cd server && npm run build",
+        "build:client": "cd client && npm install --only=dev && npm run build",
+        "build:server": "cd server && npm install --only=dev && npm run build",
         "install": "run-s install:server install:client",
         "install:server": "cd server && npm install",
         "install:client": "cd client && npm install"
@@ -27,6 +26,7 @@
         "cross-env": "^3.1.4",
         "express": "^4.14.1",
         "http-proxy-middleware": "^0.17.3",
+        "jwt-decode": "^2.2.0",
         "npm-run-all": "^4.0.1",
         "sass-loader": "^6.0.6",
         "xp": "^1.0.1"

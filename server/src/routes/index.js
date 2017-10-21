@@ -12,6 +12,6 @@ router.route('/room')
     .get(Auth.isRequestValid, room.getAllRooms);
 
 router.post('/room/add', Auth.isRequestValid, room.addOccupant);
-router.post('/room/remove', Auth.isRequestValid, room.removeOccupant);
+router.delete('/room/remove', Auth.isRequestValid, room.removeOccupant);
 
 export default router;
